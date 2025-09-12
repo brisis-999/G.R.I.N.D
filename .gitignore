@@ -1,0 +1,24 @@
+# Secretos
+.streamlit/secrets.toml
+secrets.toml
+secret.toml
+*.toml
+
+# Bases de datos
+grind.db
+*.sqlite
+*.db
+
+# Entornos
+venv/
+env/
+.venv/
+
+# Temporales
+__pycache__/
+*.pyc
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
