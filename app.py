@@ -1,13 +1,13 @@
-# app.py — GRIND v3.0 — PERSONALIDAD JARVIS-CHAT + TELEGRAM + NOTION + MEMORIA
+# app.py — GRIND v3.0 — PERSONALIDAD JARVIS-CHAT + TELEGRAM + NOTION + MEMORIA (UI OPTIMIZADA)
 # Creado por Eliezer Mesac Feliz Luciano
 # ¡Sin entrenar modelos! Solo ingeniería práctica.
+# UI Optimizada para PCs con 4GB RAM — Fondo negro con estrellas estáticas (sin animaciones pesadas)
 
 import requests
 import gradio as gr
 import os
 import time
 import json
-import subprocess
 import sqlite3
 import threading
 import random
@@ -147,7 +147,7 @@ def search_memory(query, n_results=3):
         logging.error(f"[CHROMA SEARCH] Error: {e}")
         return []
 
-# --- FUNCIONES DE IA (CORREGIDAS) ---
+# --- FUNCIONES DE IA (SIN CAMBIOS) ---
 
 def mente_groq(prompt, model="llama3-70b-8192"):
     try:
@@ -340,16 +340,12 @@ def process_memory_and_reminders(user_input):
 
     return None
 
-# --- ✅ NUEVO: PERSONALIDAD JARVIS-CHAT ---
+# --- ✅ PERSONALIDAD JARVIS-CHAT (SIN CAMBIOS) ---
 
 def apply_jarvis_personality(user_input, raw_response, user_title="jefe"):
-    """Aplica la personalidad de Jarvis-Chat a la respuesta cruda."""
-
-    # Si la respuesta ya tiene errores, no la personalizamos
     if "[ERROR]" in raw_response or "[FALLÓ]" in raw_response:
         return raw_response
 
-    # Detectar tono del usuario (simplificado)
     if any(word in user_input.lower() for word in ["jaja", "xd", "lol", "divertido", "chiste"]):
         tone = "humor"
     elif any(word in user_input.lower() for word in ["urgente", "ahora", "rápido", "importante"]):
@@ -357,7 +353,6 @@ def apply_jarvis_personality(user_input, raw_response, user_title="jefe"):
     else:
         tone = "elegante"
 
-    # Construir prompt de personalidad
     personality_prompt = f"""
     Eres GRIND, un asistente de IA con personalidad tipo Jarvis-Chat. Tus rasgos:
     - Intelectual y culto: conoces ciencia, arte, tecnología, filosofía, cultura pop.
@@ -383,18 +378,15 @@ def apply_jarvis_personality(user_input, raw_response, user_title="jefe"):
     Respuesta con personalidad:
     """
 
-    # Usar Groq para aplicar personalidad (es el más potente)
     try:
         personalized = mente_groq(personality_prompt, model="llama3-70b-8192")
-        # Asegurar que no repita el prompt
         if "Respuesta con personalidad:" in personalized:
             personalized = personalized.split("Respuesta con personalidad:", 1)[-1].strip()
         return personalized
     except:
-        # Si falla, devolver la respuesta cruda
         return raw_response
 
-# --- FUNCIÓN PRINCIPAL MEJORADA ---
+# --- FUNCIÓN PRINCIPAL MEJORADA (SIN CAMBIOS) ---
 
 def grind_responder(user_input):
     logging.info(f"[GRIND] Recibido: '{user_input}'")
@@ -418,7 +410,6 @@ def grind_responder(user_input):
     if past_contexts:
         context_str = "\n[CONTEXTO ANTERIOR RELEVANTE]\n" + "\n".join(past_contexts) + "\n---\n"
 
-    # Construir prompt para IA
     enhanced_prompt = f"""
     [SYSTEM PROMPT - BASE TÉCNICA]
     Eres un asistente útil, claro y conciso. Responde directamente.
@@ -428,15 +419,13 @@ def grind_responder(user_input):
     """
 
     raw_response = router_consejo(enhanced_prompt)
-
-    # Aplicar personalidad Jarvis-Chat
     final_response = reminder_msg + apply_jarvis_personality(user_input, raw_response, user_title)
 
     save_conversation(user_input, final_response)
     logging.info(f"[GRIND] Respondiendo: '{final_response[:100]}...'")
     return final_response
 
-# --- INTEGRACIÓN CON TELEGRAM (MEJORADA) ---
+# --- INTEGRACIÓN CON TELEGRAM (SIN CAMBIOS) ---
 
 def send_telegram_message(chat_id, text):
     if not TELEGRAM_TOKEN:
@@ -493,53 +482,24 @@ def poll_telegram_updates():
             logging.error(f"[TELEGRAM POLL] Error: {e}")
             time.sleep(10)
 
-# --- DEMO EN CONSOLA + TELEGRAM ---
+# --- 🎨 INTERFAZ GRIND — JARVIS UI — LIGERA + ESTRELLAS ESTÁTICAS (OPTIMIZADA PARA 4GB RAM) ---
 
-if __name__ == "__main__":
-    print("👑 GRIND v3.0 — PERSONALIDAD JARVIS-CHAT ACTIVADA")
-    print("Escribe 'salir' para terminar la consola.\n")
-
-    # Iniciar hilos de Telegram
-    if TELEGRAM_TOKEN:
-        processor_thread = threading.Thread(target=process_telegram_queue, daemon=True)
-        processor_thread.start()
-        poller_thread = threading.Thread(target=poll_telegram_updates, daemon=True)
-        poller_thread.start()
-
-    while True:
-        user_input = input("Tú: ").strip()
-        if user_input.lower() in ["salir", "exit", "quit"]:
-            print("Apagando núcleo de GRIND...")
-            break
-
-        if not user_input:
-            continue
-
-        response = grind_responder(user_input)
-        print(f"\nGRIND: {response}\n{'-'*80}")
-
-# --- INTERFAZ GRIND COMPLETO CON NEÓN + SONIDO ---
-import gradio as gr
-import time
-import random
-import os
-
-# --- CSS COMPLETO ---
-CSS = """
-/* Fondo animado tipo Jarvis */
-body {
+CSS_JARVIS = """
+/* Fondo negro con estrellas estáticas — Ultra ligero */
+body, .gradio-container {
     background-color: #0a0f2c !important;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 30% 70%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 80% 30%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 60% 90%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 20% 40%, rgba(255, 65, 108, 0.2) 1px, transparent 1px),
+        radial-gradient(circle at 90% 10%, rgba(255, 65, 108, 0.2) 1px, transparent 1px);
+    background-size: 100px 100px;
+    background-attachment: fixed;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    position: relative;
-}
-
-/* Contenedor principal */
-.gradio-container {
-    background: transparent !important;
-    max-width: 100% !important;
-    padding: 0 !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Título */
@@ -581,40 +541,6 @@ input, textarea, .stTextInput>div>div>input {
     font-size: 16px !important;
 }
 
-/* Sidebar */
-.gr-Accordion-header {
-    background: #000 !important;
-    border-bottom: 1px solid #00c6ff !important;
-    color: #e0f7ff !important;
-}
-
-.gr-Accordion-content {
-    background: #000 !important;
-    color: #e0f7ff !important;
-    padding: 1rem !important;
-    position: relative;
-    overflow: hidden;
-}
-
-/* Puntos tipo estrellas en sidebar */
-.gr-Accordion-content::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 30% 70%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 80% 30%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 60% 90%, rgba(0, 198, 255, 0.3) 1px, transparent 1px);
-    background-size: 100px 100px;
-    opacity: 0.3;
-    pointer-events: none;
-    z-index: 0;
-}
-
 /* Chatbot container */
 #chat-container {
     background: rgba(10, 15, 44, 0.95) !important;
@@ -624,6 +550,7 @@ input, textarea, .stTextInput>div>div>input {
     margin: 1rem 0 !important;
     height: 600px !important;
     overflow-y: auto !important;
+    border: 1px solid rgba(0, 198, 255, 0.3);
 }
 
 /* Mensajes de usuario */
@@ -639,7 +566,7 @@ input, textarea, .stTextInput>div>div>input {
     box-shadow: 0 0 8px rgba(59, 130, 246, 0.2) !important;
 }
 
-/* Mensajes de GRIND con efecto neón */
+/* Mensajes de GRIND — Efecto neón suave (sin animación para ahorrar RAM) */
 .message.bot {
     text-align: left !important;
     margin-right: auto !important;
@@ -651,45 +578,14 @@ input, textarea, .stTextInput>div>div>input {
     max-width: 80% !important;
     box-shadow: 0 0 12px rgba(255, 65, 108, 0.3) !important;
     position: relative;
+    border: 1px solid rgba(255, 65, 108, 0.2);
 }
 
-/* Efecto neón pulsante */
-.message.bot::before {
-    content: "";
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border-radius: 14px;
-    background: linear-gradient(45deg, #ff416c, #00c6ff, #ff416c);
-    z-index: -1;
-    opacity: 0.6;
-    animation: neonPulse 2s infinite;
-}
-
-@keyframes neonPulse {
-    0%, 100% {
-        opacity: 0.3;
-        filter: blur(1px);
-    }
-    50% {
-        opacity: 0.8;
-        filter: blur(2px);
-    }
-}
-
-/* Efecto de escritura futurista */
+/* Efecto de escritura */
 .typing {
     color: #00c6ff !important;
     font-weight: 500 !important;
-    animation: blink 1.5s infinite !important;
     font-style: italic !important;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
 }
 
 /* Scroll suave */
@@ -704,101 +600,64 @@ input, textarea, .stTextInput>div>div>input {
     border-radius: 10px;
 }
 
-/* Animaciones para el fondo SVG */
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0) translateX(0); }
-    25% { transform: translateY(-10px) translateX(10px); }
-    50% { transform: translateY(0) translateX(20px); }
-    75% { transform: translateY(10px) translateX(10px); }
-}
-
-/* Footer */
-footer {
-    display: none !important;
-}
+footer { display: none !important; }
 """
 
-# --- FUNCIÓN DE RESPUESTA (SIMULADA) ---
-def grind_responder(user_input):
-    time.sleep(1)
-    responses = [
-        "De inmediato, jefe. He calculado tres alternativas.",
-        "Permítame sugerir una solución eficiente.",
-        "He analizado los datos. La mejor opción es...",
-        "¿Desea que lo convierta en un horario visual?"
-    ]
-    return random.choice(responses)
+# --- LANZAR INTERFAZ ---
 
-# --- INTERFAZ PRINCIPAL ---
-with gr.Blocks(css=CSS, theme=gr.themes.Base()) as demo:
+def respond(message, history):
+    if not message.strip():
+        return history
+    response = grind_responder(message)
+    # Opcional: agregar efecto "escribiendo" con HTML ligero
+    history.append((message, response))
+    return history
+
+with gr.Blocks(css=CSS_JARVIS, theme=gr.themes.Base()) as demo:
     gr.Markdown("# 👑 GRIND — Su Asistente Jarvis")
     gr.Markdown("*Donde la elegancia británica se encuentra con la potencia de la IA.*")
 
-    # SVG animado como fondo
-    gr.HTML("""
-    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;">
-        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50%" cy="50%" r="10" fill="#00c6ff" opacity="0.8" />
-            <circle cx="50%" cy="50%" r="30" fill="none" stroke="#00c6ff" stroke-width="0.5" opacity="0.3" 
-                    transform="rotate(0 50% 50%)" style="animation: rotate 4s linear infinite;" />
-            <circle cx="50%" cy="50%" r="60" fill="none" stroke="#00c6ff" stroke-width="0.3" opacity="0.2" 
-                    transform="rotate(0 50% 50%)" style="animation: rotate 6s linear infinite reverse;" />
-            <circle cx="50%" cy="50%" r="90" fill="none" stroke="#00c6ff" stroke-width="0.2" opacity="0.1" 
-                    transform="rotate(0 50% 50%)" style="animation: rotate 8s linear infinite;" />
-            <circle cx="40%" cy="30%" r="2" fill="#00c6ff" opacity="0.7" 
-                    style="animation: float 3s ease-in-out infinite;" />
-            <circle cx="60%" cy="20%" r="2" fill="#00c6ff" opacity="0.7" 
-                    style="animation: float 4s ease-in-out infinite;" />
-            <circle cx="70%" cy="70%" r="2" fill="#00c6ff" opacity="0.7" 
-                    style="animation: float 5s ease-in-out infinite;" />
-            <circle cx="30%" cy="80%" r="2" fill="#00c6ff" opacity="0.7" 
-                    style="animation: float 6s ease-in-out infinite;" />
-            <text x="50%" y="50%" font-size="20" fill="#00c6ff" text-anchor="middle" dominant-baseline="central"
-                  opacity="0.2" style="font-family: 'Arial', sans-serif; letter-spacing: 2px;">
-                GRIND
-            </text>
-        </svg>
-    </div>
-    """)
-
     with gr.Row():
         with gr.Column(scale=1):
-            sidebar = gr.Accordion("⚙️ Control Panel", open=False)
-            with sidebar:
-                gr.Markdown("### Historial de chats")
-                gr.Markdown("• Conversación 1\n• Conversación 2\n• Conversación 3")
-                gr.Button("Exportar", variant="primary")
-                gr.Button("Limpiar", variant="stop")
+            gr.Markdown("### ⚙️ Panel de Control")
+            gr.Markdown("• Historial guardado en Notion\n• Memoria activa con ChromaDB\n• Recordatorios programables")
+            export_btn = gr.Button("Exportar Historial", variant="primary")
+            clear_btn = gr.Button("Limpiar Chat", variant="stop")
 
         with gr.Column(scale=3):
             chatbot = gr.Chatbot(
                 elem_id="chat-container",
-                label="Conversación",
+                label="Conversación con GRIND",
                 height=600,
                 bubble_full_width=False,
                 show_copy_button=True,
-                avatar_images=(None, None)
+                avatar_images=(None, "https://i.imgur.com/8Qj5h8r.png")  # Opcional: avatar de Jarvis
             )
 
-    msg = gr.Textbox(lines=2, placeholder="Ordene, jefe...", label="Mensaje")
+    msg = gr.Textbox(lines=2, placeholder="Ordene, jefe...", label="Su Mensaje")
     btn = gr.Button("Enviar", variant="primary")
-
-    def respond(message, history):
-        if message.strip() == "":
-            return history
-        response = grind_responder(message)
-        formatted_response = f"<span class='typing'>{response}</span>"
-        history.append((message, formatted_response))
-        return history
 
     msg.submit(respond, [msg, chatbot], [chatbot])
     btn.click(respond, [msg, chatbot], [chatbot])
 
-# --- LANZAR ---
+    # Limpiar chat (opcional)
+    def clear_chat():
+        return []
+
+    clear_btn.click(clear_chat, outputs=chatbot)
+
+# --- INICIAR TODO ---
+
 if __name__ == "__main__":
+    print("👑 GRIND v3.0 — PERSONALIDAD JARVIS-CHAT ACTIVADA")
+    print("Escribe 'salir' para terminar la consola.\n")
+
+    # Iniciar hilos de Telegram
+    if TELEGRAM_TOKEN:
+        processor_thread = threading.Thread(target=process_telegram_queue, daemon=True)
+        processor_thread.start()
+        poller_thread = threading.Thread(target=poll_telegram_updates, daemon=True)
+        poller_thread.start()
+
+    # Iniciar interfaz Gradio
     demo.launch()
