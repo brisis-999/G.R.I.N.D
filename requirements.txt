@@ -1,5 +1,4 @@
 streamlit
 groq
-google-generativeai
 requests
-python-dotenv
+duckduckgo-search
