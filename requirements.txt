@@ -1,18 +1,9 @@
-# --- CORE ---
 gradio==4.36.0
 requests==2.31.0
 python-dotenv==1.0.1
 chromadb==0.4.24
-
-# --- UTILS ---
+sentence-transformers==2.6.1
+python-telegram-bot==20.7
 pytz==2024.1
 langdetect==1.0.9
-
-# --- TELEGRAM ---
-python-telegram-bot==20.7
-
-# --- EMBEDDINGS (para ChromaDB) ---
-sentence-transformers==2.6.1
-
-# --- OPCIONAL: Para logs y UX en consola ---
 rich==13.7.1

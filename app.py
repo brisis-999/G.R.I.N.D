@@ -4,19 +4,19 @@
 # UI Optimizada para PCs con 4GB RAM — Fondo negro con estrellas estáticas (sin animaciones pesadas)
 
 import requests
-import gradio as gr
 import os
-import time
 import json
 import sqlite3
-import threading
 import random
 import logging
-from queue import Queue
 from datetime import datetime, timedelta
-import chromadb
-from chromadb.utils import embedding_functions
+import requests
 from dotenv import load_dotenv
+from flask import Flask, request, jsonify, render_template_string
+from flask_cors import CORS
+import threading
+import time
+from queue import Queue
 
 # --- CONFIGURACIÓN DE LOGGING ---
 logging.basicConfig(
@@ -482,170 +482,6 @@ def poll_telegram_updates():
             logging.error(f"[TELEGRAM POLL] Error: {e}")
             time.sleep(10)
 
-# --- 🎨 INTERFAZ GRIND — JARVIS UI — LIGERA + ESTRELLAS ESTÁTICAS (OPTIMIZADA PARA 4GB RAM) ---
-
-CSS_JARVIS = """
-/* Fondo negro con estrellas estáticas — Ultra ligero */
-body, .gradio-container {
-    background-color: #0a0f2c !important;
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 30% 70%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 80% 30%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 60% 90%, rgba(0, 198, 255, 0.3) 1px, transparent 1px),
-        radial-gradient(circle at 20% 40%, rgba(255, 65, 108, 0.2) 1px, transparent 1px),
-        radial-gradient(circle at 90% 10%, rgba(255, 65, 108, 0.2) 1px, transparent 1px);
-    background-size: 100px 100px;
-    background-attachment: fixed;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Título */
-h1 {
-    color: #ff416c !important;
-    text-align: center !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
-    text-shadow: 0 0 10px rgba(255, 65, 108, 0.7) !important;
-    margin: 1rem 0 !important;
-    font-size: 2rem !important;
-}
-
-/* Botones */
-button, .stButton>button {
-    background: linear-gradient(135deg, #ff416c, #ff4b2b) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 12px !important;
-    padding: 12px 24px !important;
-    font-weight: bold !important;
-    letter-spacing: 0.5px !important;
-    box-shadow: 0 0 15px rgba(255, 65, 108, 0.5) !important;
-    transition: all 0.3s ease !important;
-}
-
-button:hover, .stButton>button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 25px rgba(255, 65, 108, 0.8) !important;
-}
-
-/* Input de texto */
-input, textarea, .stTextInput>div>div>input {
-    background-color: rgba(10, 30, 60, 0.7) !important;
-    color: #ffffff !important;
-    border: 1px solid #ff416c !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    font-size: 16px !important;
-}
-
-/* Chatbot container */
-#chat-container {
-    background: rgba(10, 15, 44, 0.95) !important;
-    backdrop-filter: blur(5px) !important;
-    border-radius: 12px !important;
-    padding: 1rem !important;
-    margin: 1rem 0 !important;
-    height: 600px !important;
-    overflow-y: auto !important;
-    border: 1px solid rgba(0, 198, 255, 0.3);
-}
-
-/* Mensajes de usuario */
-.message.user {
-    text-align: right !important;
-    margin-left: auto !important;
-    margin-right: 0 !important;
-    background: rgba(30, 58, 138, 0.4) !important;
-    border-left: 4px solid #3b82f6 !important;
-    padding: 12px !important;
-    border-radius: 12px 12px 0 12px !important;
-    max-width: 80% !important;
-    box-shadow: 0 0 8px rgba(59, 130, 246, 0.2) !important;
-}
-
-/* Mensajes de GRIND — Efecto neón suave (sin animación para ahorrar RAM) */
-.message.bot {
-    text-align: left !important;
-    margin-right: auto !important;
-    margin-left: 0 !important;
-    background: rgba(15, 23, 42, 0.8) !important;
-    border-left: 4px solid #ff416c !important;
-    padding: 12px !important;
-    border-radius: 12px 12px 12px 0 !important;
-    max-width: 80% !important;
-    box-shadow: 0 0 12px rgba(255, 65, 108, 0.3) !important;
-    position: relative;
-    border: 1px solid rgba(255, 65, 108, 0.2);
-}
-
-/* Efecto de escritura */
-.typing {
-    color: #00c6ff !important;
-    font-weight: 500 !important;
-    font-style: italic !important;
-}
-
-/* Scroll suave */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #0a0f2c;
-}
-::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #ff416c, #00c6ff);
-    border-radius: 10px;
-}
-
-footer { display: none !important; }
-"""
-
-# --- LANZAR INTERFAZ ---
-
-def respond(message, history):
-    if not message.strip():
-        return history
-    response = grind_responder(message)
-    # Opcional: agregar efecto "escribiendo" con HTML ligero
-    history.append((message, response))
-    return history
-
-with gr.Blocks(css=CSS_JARVIS, theme=gr.themes.Base()) as demo:
-    gr.Markdown("# 👑 GRIND — Su Asistente Jarvis")
-    gr.Markdown("*Donde la elegancia británica se encuentra con la potencia de la IA.*")
-
-    with gr.Row():
-        with gr.Column(scale=1):
-            gr.Markdown("### ⚙️ Panel de Control")
-            gr.Markdown("• Historial guardado en Notion\n• Memoria activa con ChromaDB\n• Recordatorios programables")
-            export_btn = gr.Button("Exportar Historial", variant="primary")
-            clear_btn = gr.Button("Limpiar Chat", variant="stop")
-
-        with gr.Column(scale=3):
-            chatbot = gr.Chatbot(
-                elem_id="chat-container",
-                label="Conversación con GRIND",
-                height=600,
-                bubble_full_width=False,
-                show_copy_button=True,
-                avatar_images=(None, "https://i.imgur.com/8Qj5h8r.png")  # Opcional: avatar de Jarvis
-            )
-
-    msg = gr.Textbox(lines=2, placeholder="Ordene, jefe...", label="Su Mensaje")
-    btn = gr.Button("Enviar", variant="primary")
-
-    msg.submit(respond, [msg, chatbot], [chatbot])
-    btn.click(respond, [msg, chatbot], [chatbot])
-
-    # Limpiar chat (opcional)
-    def clear_chat():
-        return []
-
-    clear_btn.click(clear_chat, outputs=chatbot)
-
 # --- INICIAR TODO ---
 
 if __name__ == "__main__":
@@ -659,5 +495,111 @@ if __name__ == "__main__":
         poller_thread = threading.Thread(target=poll_telegram_updates, daemon=True)
         poller_thread.start()
 
-    # Iniciar interfaz Gradio
-    demo.launch()
+    # --- 🎨 INTERFAZ HTML/CSS/JS INTEGRADA ---
+HTML_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>GRIND — Tu Asistente Jarvis</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            background-color: #0a0f2c;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 198, 255, 0.4) 1px, transparent 1px),
+                radial-gradient(circle at 30% 70%, rgba(0, 198, 255, 0.4) 1px, transparent 1px),
+                radial-gradient(circle at 80% 30%, rgba(255, 65, 108, 0.3) 1px, transparent 1px),
+                radial-gradient(circle at 60% 90%, rgba(255, 65, 108, 0.3) 1px, transparent 1px);
+            background-size: 100px 100px;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; color: #ff416c; text-shadow: 0 0 10px rgba(255, 65, 108, 0.7); margin-bottom: 30px; }
+        #chat-box {
+            height: 70vh; overflow-y: auto; padding: 20px;
+            background: rgba(15, 23, 42, 0.8); border-radius: 12px;
+            border: 1px solid rgba(0, 198, 255, 0.3); margin-bottom: 20px;
+        }
+        .message { padding: 12px 16px; border-radius: 12px; margin-bottom: 12px; max-width: 80%; word-wrap: break-word; }
+        .user { background: rgba(30, 58, 138, 0.4); border-left: 4px solid #3b82f6; margin-left: auto; text-align: right; }
+        .bot { background: rgba(15, 23, 42, 0.9); border-left: 4px solid #ff416c; margin-right: auto; position: relative; }
+        .bot::before {
+            content: ""; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            border-radius: 14px; background: linear-gradient(45deg, #ff416c, #00c6ff); z-index: -1; opacity: 0.3;
+        }
+        .input-area { display: flex; gap: 10px; }
+        #user-input { flex: 1; padding: 12px; border: 1px solid #ff416c; border-radius: 8px; background: rgba(10, 30, 60, 0.7); color: white; font-size: 16px; }
+        #send-btn { padding: 12px 24px; background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        #send-btn:hover { box-shadow: 0 0 15px rgba(255, 65, 108, 0.8); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👑 GRIND</h1>
+        <div id="chat-box"></div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Ordene, jefe..." autocomplete="off">
+            <button id="send-btn">Enviar</button>
+        </div>
+    </div>
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('message', sender);
+            msgDiv.textContent = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            addMessage(message, 'user');
+            userInput.value = '';
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                addMessage(data.response || "❌ Error", 'bot');
+            } catch (error) {
+                addMessage("⚠️ No se pudo conectar.", 'bot');
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    </script>
+</body>
+</html>
+'''
+
+# --- 🧠 FLASK SERVER ---
+app = Flask(__name__)
+CORS(app)
+
+@app.route("/")
+def home():
+    return render_template_string(HTML_TEMPLATE)
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    try:
+        data = request.get_json()
+        user_message = data.get("message", "").strip()
+        if not user_message:
+            return jsonify({"error": "Mensaje vacío"}), 400
+        response = grind_responder(user_message)
+        return jsonify({"response": response})
+    except Exception as e:
+        logging.error(f"[SERVER ERROR] {e}")
+        return jsonify({"error": str(e)}), 500
