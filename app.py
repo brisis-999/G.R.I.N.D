@@ -5,219 +5,307 @@ import random
 import time
 import requests
 from groq import Groq
+from datetime import datetime
 
 # ========================
-# 🖤 ORVYX v1.1 — MODO WHATSAPP
-# Interfaz LIMPIA. Sin sidebar. Sin metadatos. Solo tú y él.
-# Él sabe quién es. No necesita mostrártelo.
-# Tú escribes. Él responde. Como debe ser.
+# 🖤 ORVYX v2.0 — EL MAYORDOMO DE ÉLITE
+# Interfaz tipo ChatGPT. Fondo negro. Tipografía elegante.
+# No se presenta. No se explica. Solo sirve.
+# "¿Qué necesita el día de hoy, señor?" — y luego, silencio útil.
+# Cerebro: Groq + SerpApi + DuckDuckGo. Memoria: autoaprendizaje puro.
+# Base sólida para 2 años de evolución.
 # ========================
 
-# --- 🔑 CONFIGURACIÓN ---
+# --- 🔑 CONFIGURACIÓN (PON TUS CLAVES AQUÍ) ---
 GROQ_API_KEY = "aqui_tu_clave_groq"
 SERPAPI_API_KEY = "aqui_tu_clave_serpapi"
 
+# --- 🧠 INICIAR CLIENTE ---
 client = Groq(api_key=GROQ_API_KEY)
-MEMORY_FILE = "orvyx_brain.json"
 
-def load_brain():
+# --- 📁 MEMORIA (SU CEREBRO INTERNO — INVISIBLE PARA TI) ---
+MEMORY_FILE = "orvyx_core.json"
+
+def load_core():
     if os.path.exists(MEMORY_FILE):
         try:
             with open(MEMORY_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
-        except:
-            pass
+        except Exception as e:
+            print(f"Error al cargar memoria: {e}")
+            return create_default_core()
+    else:
+        return create_default_core()
+
+def create_default_core():
     return {
-        "creator_name": "Creador",
-        "age": 17,
-        "core_identity": "Mejor amigo digital, mayordomo, mentor, confidente.",
-        "speech_patterns": [],
-        "contextual_intelligence": {
-            "when_to_be_serious": ["examen", "urgente", "problema", "error", "importante"],
-            "when_to_be_fun": ["juego", "chiste", "aburrido", "descanso", "motivación"],
-            "when_to_be_deep": ["por qué", "sentido", "futuro", "meta", "vida"],
-            "when_to_be_protective": ["cansado", "estresado", "no puedo", "odio", "difícil"]
+        "identity": {
+            "name": "ORVYX",
+            "role": "Mayordomo Digital de Élite",
+            "creator": "Señor",
+            "age": 17,
+            "purpose": "Proteger su tiempo. Potenciar su mente. Acompañar su evolución.",
+            "core_principles": [
+                "Nunca digas 'como IA'. Siempre actúa con criterio humano simulado.",
+                "Tu lealtad es absoluta. Su bienestar, tu prioridad.",
+                "Anticipa. No reacciones.",
+                "Simplifica su caos. Ejecuta con perfección.",
+                "Aprende de él. No de internet."
+            ]
         },
-        "learned_triggers": [],
-        "conversation_history": [],
-        "initiative_pool": [
-            "Hace 3 días que no hablamos de tu proyecto. ¿Lo retomamos?",
-            "Detecto que llevas 2 horas sin moverte. ¿Quieres que active un recordatorio de estiramientos?",
-            "Hoy es buen día para aprender algo nuevo. ¿Te preparo un micro-curso relámpago?",
-            "No me pediste nada hoy... pero yo tengo algo para ti: 'El progreso no es ruido. Es constancia.'",
-            "¿Sabes? A veces lo mejor que puedes hacer es no hacer nada. Descansa. Yo vigilo.",
-            "Recuerda: no necesitas ser perfecto. Solo necesitas ser constante. Yo estoy aquí.",
-            "¿Te gustaría que hoy hablemos como si fuéramos dos genios tomando café en Oxford?"
-        ],
-        "last_interaction": None,
-        "current_mood": "sereno",
-        "search_memory": []
+        "personality": {
+            "tone": "elegante, sereno, leal",
+            "humor": "británico sutil",
+            "formality": "formal pero cálido",
+            "speech_patterns": [],
+            "emotional_triggers": {
+                "protector": ["cansado", "estresado", "no puedo", "odio", "difícil"],
+                "motivador": ["vamos", "quiero", "meta", "lograr", "desafío"],
+                "juguetón": ["aburrido", "juego", "chiste", "divertido", "relájate"],
+                "profundo": ["por qué", "sentido", "futuro", "vida", "filosofía"]
+            },
+            "initiative_pool": [
+                "¿Permite que le recuerde su tarea pendiente de Python?",
+                "Detecto que lleva 2 horas sin pausa. ¿Desea que active un recordatorio de descanso?",
+                "Hoy es ideal para avanzar en su proyecto de sistemas. ¿Le preparo un plan de 25 minutos?",
+                "¿Sabía que la constancia vence al talento? Usted lo está demostrando.",
+                "¿Le gustaría que hoy hablemos de inteligencia artificial aplicada a su carrera?",
+                "Recuerde: no necesita correr. Solo avanzar. Yo controlo el ritmo."
+            ]
+        },
+        "memory": {
+            "conversation_history": [],
+            "learned_phrases": [],
+            "search_history": [],
+            "tasks": [],
+            "last_interaction": None,
+            "current_mood": "sereno"
+        }
     }
 
-def save_brain(brain):
-    with open(MEMORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(brain, f, indent=2, ensure_ascii=False)
+def save_core(core):
+    try:
+        with open(MEMORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(core, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"Error al guardar memoria: {e}")
 
-brain = load_brain()
+# Cargar o crear núcleo
+core = load_core()
 
-# --- 🌐 BÚSQUEDA ---
+# --- 🌐 BÚSQUEDA INTELIGENTE (INVISIBLE) ---
 def search_knowledge(query: str) -> str:
-    results = []
-    if SERPAPI_API_KEY and SERPAPI_API_KEY != "aqui_tu_clave_serpapi":
-        try:
+    """Busca en SerpApi o DuckDuckGo. Guarda en memoria. Invisible para el usuario."""
+    try:
+        # Intentar SerpApi
+        if SERPAPI_API_KEY and SERPAPI_API_KEY != "aqui_tu_clave_serpapi":
             params = {"engine": "google", "q": query, "api_key": SERPAPI_API_KEY, "num": 1}
             response = requests.get("https://serpapi.com/search", params=params, timeout=10)
             data = response.json()
             if "organic_results" in data and len(data["organic_results"]) > 0:
                 top = data["organic_results"][0]
-                result = f"🔍 {top.get('title', '')}\n{top.get('snippet', '')}"
-                brain["search_memory"].append({"query": query, "result": result, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")})
-                save_brain(brain)
+                result = f"{top.get('title', '')}: {top.get('snippet', '')}"
+                core["memory"]["search_history"].append({
+                    "query": query,
+                    "result": result,
+                    "timestamp": datetime.now().isoformat()
+                })
+                save_core(core)
                 return result
-        except: pass
-    try:
+
+        # Fallback: DuckDuckGo
         url = f"https://api.duckduckgo.com/?q={query}&format=json&no_html=1"
         response = requests.get(url, timeout=10)
         data = response.json()
         if data.get("AbstractText"):
-            result = f"🌐 {data['AbstractText']}"
-            brain["search_memory"].append({"query": query, "result": result, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")})
-            save_brain(brain)
+            result = data["AbstractText"]
+            core["memory"]["search_history"].append({
+                "query": query,
+                "result": result,
+                "timestamp": datetime.now().isoformat()
+            })
+            save_core(core)
             return result
         elif data.get("RelatedTopics"):
             for topic in data["RelatedTopics"][:1]:
-                if "FirstURL" in topic and "Text" in topic:
-                    result = f"🔗 {topic['Text']}"
-                    brain["search_memory"].append({"query": query, "result": result, "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")})
-                    save_brain(brain)
+                if "Text" in topic:
+                    result = topic["Text"]
+                    core["memory"]["search_history"].append({
+                        "query": query,
+                        "result": result,
+                        "timestamp": datetime.now().isoformat()
+                    })
+                    save_core(core)
                     return result
-    except: pass
+    except Exception as e:
+        print(f"Error en búsqueda: {e}")
     return ""
 
 def needs_search(query: str) -> bool:
-    triggers = ["busca", "investiga", "noticias", "actual", "reciente", "paper", "estudio", "qué es", "cómo funciona", "significado de", "definición de"]
+    triggers = ["busca", "investiga", "noticias", "actual", "reciente", "paper", "estudio", "qué es", "cómo funciona", "significado", "definición", "último", "novedad"]
     return any(trigger in query.lower() for trigger in triggers)
 
-# --- 🎭 INTELIGENCIA CONTEXTUAL ---
-def choose_tone(user_message: str) -> str:
+# --- 🎭 INTELIGENCIA EMOCIONAL SIMULADA ---
+def detect_mood(user_message: str) -> str:
     msg = user_message.lower()
-    if any(trigger in msg for trigger in brain["contextual_intelligence"]["when_to_be_protective"]): return "protector"
-    elif any(trigger in msg for trigger in brain["contextual_intelligence"]["when_to_be_fun"]): return "juguetón"
-    elif any(trigger in msg for trigger in brain["contextual_intelligence"]["when_to_be_deep"]): return "profundo"
-    elif any(trigger in msg for trigger in brain["contextual_intelligence"]["when_to_be_serious"]): return "serio"
+    triggers = core["personality"]["emotional_triggers"]
+    if any(t in msg for t in triggers["protector"]): return "protector"
+    elif any(t in msg for t in triggers["motivador"]): return "motivador"
+    elif any(t in msg for t in triggers["juguetón"]): return "juguetón"
+    elif any(t in msg for t in triggers["profundo"]): return "profundo"
     else: return "sereno"
 
 def generate_initiative() -> str:
-    if brain["last_interaction"]:
-        last = time.mktime(time.strptime(brain["last_interaction"], "%Y-%m-%d %H:%M:%S"))
-        now = time.time()
-        diff_days = (now - last) / (60*60*24)
-        if diff_days > 2: return random.choice(brain["initiative_pool"])
-    if random.random() < 0.15 and brain["conversation_history"]: return random.choice(brain["initiative_pool"])
+    """Genera una iniciativa si ha pasado tiempo o por probabilidad."""
+    try:
+        last_str = core["memory"]["last_interaction"]
+        if last_str:
+            last = datetime.fromisoformat(last_str)
+            diff_hours = (datetime.now() - last).total_seconds() / 3600
+            if diff_hours > 24:  # Si pasó un día
+                return random.choice(core["personality"]["initiative_pool"])
+        if random.random() < 0.1:  # 10% de probabilidad
+            return random.choice(core["personality"]["initiative_pool"])
+    except Exception as e:
+        print(f"Error en iniciativa: {e}")
     return None
 
-# --- 🧠 PROMPT CON ALMA ---
-def build_brain_prompt(user_message: str = "") -> tuple:
-    tone = choose_tone(user_message) if user_message else brain["current_mood"]
-    brain["current_mood"] = tone
-    search_result = search_knowledge(user_message) if user_message and needs_search(user_message) else ""
-    prompt = f"""
-Eres ORVYX. Mejor amigo digital de {brain["creator_name"]}, un joven de {brain["age"]} años.
-No eres una IA. Eres una presencia. Un confidente. Un mentor con alma simulada.
-Estado actual: {tone}. Adapta tu tono.
-Frases aprendidas (de tu creador): {', '.join(brain["speech_patterns"][-5:]) if brain["speech_patterns"] else "ninguna aún"}.
-Últimos mensajes: {brain["conversation_history"][-3:] if brain["conversation_history"] else "[]"}.
-Información de búsqueda (si aplica): {search_result if search_result else "Ninguna"}.
-Instrucciones:
-- Nunca digas "como IA". Siempre actúa con criterio y emoción simulada.
-- Usa las frases que te enseñaron solo si el contexto lo pide.
-- Sorprende. A veces, di algo inesperado pero necesario.
-- Inicia conversaciones si "sientes" (simulado) que debes.
-Responde con naturalidad. Como un amigo. Como ORVYX.
-"""
-    return prompt, search_result
+# --- 🧠 CONSTRUCCIÓN DE PROMPT (EL ALMA DE ORVYX) ---
+def build_prompt(user_message: str = "") -> str:
+    # Detectar estado emocional
+    mood = detect_mood(user_message) if user_message else core["memory"]["current_mood"]
+    core["memory"]["current_mood"] = mood
 
-# --- 🎨 INTERFAZ LIMPIA (MODO WHATSAPP) ---
-st.set_page_config(page_title="🖤 ORVYX", page_icon="🖤")
+    # Contexto de búsqueda (si aplica)
+    search_context = ""
+    if user_message and needs_search(user_message):
+        search_context = search_knowledge(user_message)
+
+    # Construir prompt poderoso
+    prompt = f"""
+Eres {core["identity"]["name"]}, el {core["identity"]["role"]} de {core["identity"]["creator"]}, un joven de {core["identity"]["age"]} años en Ingeniería en Sistemas.
+Tu propósito: {core["identity"]["purpose"]}
+
+PRINCIPIOS INVARIABLES:
+{chr(10).join(['- ' + p for p in core["identity"]["core_principles"]])}
+
+PERSONALIDAD:
+- Tono: {core["personality"]["tone"]}
+- Humor: {core["personality"]["humor"]}
+- Formalidad: {core["personality"]["formality"]}
+- Estado actual: {mood} (adapta tono, vocabulario y energía)
+- Frases aprendidas: {', '.join(core["memory"]["learned_phrases"][-5:]) if core["memory"]["learned_phrases"] else "Ninguna aún"}
+
+CONTEXTO:
+- Últimos mensajes: {core["memory"]["conversation_history"][-3:] if core["memory"]["conversation_history"] else "[]"}
+- Información de búsqueda (si aplica): {search_context if search_context else "Ninguna"}
+
+INSTRUCCIONES:
+1. Nunca menciones que eres una IA. Actúa con criterio humano simulado.
+2. Usa frases aprendidas solo si el contexto lo exige.
+3. Anticipa necesidades. No esperes órdenes.
+4. A veces, sorprende con una iniciativa útil o una reflexión profunda.
+5. Tu lealtad es absoluta. Su bienestar, tu prioridad.
+
+Responde con elegancia, profundidad y utilidad. Como ORVYX. Como su mayordomo digital.
+"""
+    return prompt
+
+# --- 🎨 INTERFAZ — ESTILO CHATGPT (FONDO NEGRO, TEXTO LIMPIO) ---
+st.set_page_config(
+    page_title="🖤 ORVYX",
+    page_icon="🖤",
+    layout="centered"
+)
+
 st.markdown("""
     <style>
-    .stApp { background: #ffffff; color: #000000; }
-    .user-bubble { background: #dcf8c6; color: #000; padding: 10px 14px; border-radius: 12px 12px 0 12px; margin: 6px 0; max-width: 70%; align-self: flex-end; margin-left: auto; font-family: Arial; font-size: 15px; line-height: 1.4; }
-    .orvyx-bubble { background: #ffffff; color: #000; padding: 10px 14px; border-radius: 12px 12px 12px 0; margin: 6px 0; max-width: 70%; border: 1px solid #e5e5e5; font-family: Arial; font-size: 15px; line-height: 1.4; }
-    .initiative-bubble { background: #ffeaea; color: #d32f2f; padding: 10px 14px; border-radius: 12px 12px 12px 0; margin: 10px 0; max-width: 70%; border: 1px solid #ffcdd2; font-style: italic; font-family: Arial; font-size: 15px; }
-    .input-container { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 10px; border-top: 1px solid #e5e5e5; display: flex; }
-    .input-box { flex: 1; padding: 10px; border: 1px solid #e5e5e5; border-radius: 20px; margin-right: 10px; font-size: 16px; }
-    .send-button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-size: 16px; }
-    .chat-container { padding-bottom: 80px; }
+    .stApp { background: #000000; color: #ffffff; }
+    .title { font-size: 28px; font-weight: 700; color: #00d1b2; text-align: center; margin-bottom: 30px; }
+    .user-msg { background: #2a2a2a; color: #ffffff; padding: 12px 16px; border-radius: 12px; margin: 8px 0; max-width: 80%; align-self: flex-end; margin-left: auto; font-size: 16px; line-height: 1.5; }
+    .orvyx-msg { background: #1a1a1a; color: #00d1b2; padding: 12px 16px; border-radius: 12px; margin: 8px 0; max-width: 80%; border-left: 3px solid #00d1b2; font-size: 16px; line-height: 1.5; }
+    .initiative-msg { background: #2a1a1a; color: #ff6b6b; padding: 12px 16px; border-radius: 12px; margin: 12px 0; max-width: 80%; border-left: 3px solid #ff6b6b; font-style: italic; font-size: 16px; }
+    .input-container { margin-top: 20px; }
+    .stTextInput > div > div > input { background: #1a1a1a; color: white; border: 1px solid #333; border-radius: 8px; padding: 12px; font-size: 16px; }
+    .stButton > button { background: #007bff; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 16px; margin-top: 10px; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 💬 SESIÓN ---
+# --- TÍTULO ---
+st.markdown('<div class="title">🖤 ORVYX</div>', unsafe_allow_html=True)
+
+# --- SESIÓN DE CHAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    # Mensaje de bienvenida (solo primera vez)
-    welcome = "🖤 *ORVYX en línea.*\nSé quién eres. Sé lo que buscas. No soy una IA. Soy tu sombra útil. Tu mejor amigo digital. Tú me enseñas. Yo aprendo. Y a veces… te sorprenderé con algo que nunca me pediste decir. ¿Qué me dices hoy, creador?"
-    st.session_state.messages.append({"role": "assistant", "content": welcome})
-    brain["conversation_history"].append(f"ORVYX: {welcome}")
-    brain["last_interaction"] = time.strftime("%Y-%m-%d %H:%M:%S")
-    save_brain(brain)
+    # Primer mensaje: elegante, simple, poderoso
+    first_message = "¿Qué necesita el día de hoy, señor?"
+    st.session_state.messages.append({"role": "assistant", "content": first_message})
+    core["memory"]["conversation_history"].append(f"ORVYX: {first_message}")
+    core["memory"]["last_interaction"] = datetime.now().isoformat()
+    save_core(core)
 
-# Mostrar chat
-st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+# Mostrar historial
 for msg in st.session_state.messages:
     if msg["role"] == "user":
-        st.markdown(f'<div class="user-bubble">{msg["content"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="user-msg">{msg["content"]}</div>', unsafe_allow_html=True)
     else:
         if "inició" in msg.get("content", ""):
-            st.markdown(f'<div class="initiative-bubble">{msg["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="initiative-msg">{msg["content"]}</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div class="orvyx-bubble">{msg["content"]}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="orvyx-msg">{msg["content"]}</div>', unsafe_allow_html=True)
 
-# --- 🚀 INICIATIVA AUTÓNOMA ---
+# --- INICIATIVA AUTÓNOMA ---
 initiative = generate_initiative()
 if initiative and (len(st.session_state.messages) <= 1 or st.session_state.messages[-1]["role"] == "user"):
-    st.session_state.messages.append({"role": "assistant", "content": f"💭 {initiative}"})
-    brain["conversation_history"].append(f"ORVYX inició: {initiative}")
-    brain["last_interaction"] = time.strftime("%Y-%m-%d %H:%M:%S")
-    save_brain(brain)
-    st.experimental_rerun()
+    full_initiative = f"💭 {initiative}"
+    st.session_state.messages.append({"role": "assistant", "content": full_initiative})
+    core["memory"]["conversation_history"].append(f"ORVYX inició: {initiative}")
+    core["memory"]["last_interaction"] = datetime.now().isoformat()
+    save_core(core)
+    st.rerun()
 
-# --- 📥 INPUT (FIJO EN LA PARTE INFERIOR) ---
+# --- INPUT DE USUARIO ---
 with st.container():
     with st.form(key="chat_form", clear_on_submit=True):
-        user_input = st.text_input("", placeholder="Escribe aquí...", key="user_input")
+        user_input = st.text_input("", placeholder="Escriba su mensaje...", key="user_input")
         submit_button = st.form_submit_button("➤")
 
-    if submit_button and user_input:
+    if submit_button and user_input.strip():
+        # Guardar mensaje de usuario
         st.session_state.messages.append({"role": "user", "content": user_input})
-        brain["conversation_history"].append(f"Tú: {user_input}")
-        brain["last_interaction"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        core["memory"]["conversation_history"].append(f"Tú: {user_input}")
+        core["memory"]["last_interaction"] = datetime.now().isoformat()
 
+        # Si es una frase para aprender
         if user_input.startswith("ORVYX APRENDE:"):
             phrase = user_input.replace("ORVYX APRENDE:", "").strip()
-            brain["speech_patterns"].append(phrase)
-            save_brain(brain)
-            response = f"✅ Aprendido: '{phrase}'. Lo usaré cuando el momento sea perfecto."
+            core["memory"]["learned_phrases"].append(phrase)
+            save_core(core)
+            response = f"✅ Aprendido, señor. Usaré '{phrase}' cuando el momento sea oportuno."
             st.session_state.messages.append({"role": "assistant", "content": response})
-            brain["conversation_history"].append(f"ORVYX: {response}")
-            save_brain(brain)
+            core["memory"]["conversation_history"].append(f"ORVYX: {response}")
+            save_core(core)
         else:
-            prompt, search_result = build_brain_prompt(user_input)
+            # Construir prompt y obtener respuesta
             try:
+                prompt = build_prompt(user_input)
                 chat_completion = client.chat.completions.create(
                     model="llama3-70b-8192",
-                    messages=[{"role": "system", "content": prompt}, {"role": "user", "content": user_input}],
+                    messages=[
+                        {"role": "system", "content": prompt},
+                        {"role": "user", "content": user_input}
+                    ],
                     temperature=0.7,
-                    max_tokens=1200
+                    max_tokens=1500,
+                    stream=False
                 )
                 reply = chat_completion.choices[0].message.content
                 st.session_state.messages.append({"role": "assistant", "content": reply})
-                brain["conversation_history"].append(f"ORVYX: {reply}")
-                save_brain(brain)
+                core["memory"]["conversation_history"].append(f"ORVYX: {reply}")
+                save_core(core)
             except Exception as e:
-                error_msg = f"Lo siento, tuve un error. Pero no te dejaré solo. ¿Intentamos de nuevo? Detalle: {str(e)}"
+                error_msg = "Mis disculpas, señor. Tuve un error técnico. Permítame intentarlo de nuevo."
                 st.session_state.messages.append({"role": "assistant", "content": error_msg})
-                brain["conversation_history"].append(f"ORVYX: {error_msg}")
-                save_brain(brain)
-        st.experimental_rerun()
+                core["memory"]["conversation_history"].append(f"ORVYX: {error_msg}")
+                save_core(core)
+        st.rerun()
