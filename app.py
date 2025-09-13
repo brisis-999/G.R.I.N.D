@@ -766,35 +766,6 @@ with gr.Blocks(css=CSS, theme=gr.themes.Base()) as demo:
     </div>
     """)
 
-    # Sonido de escritura futurista
-    gr.HTML("""
-    <audio id="typingSound" src="file=typing.mp3" preload="auto"></audio>
-    <script>
-        function playTypingSound() {
-            const audio = document.getElementById('typingSound');
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio play failed:", e));
-        }
-
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach(function(node) {
-                        if (node.classList && node.classList.contains('message') && node.classList.contains('bot')) {
-                            playTypingSound();
-                        }
-                    });
-                }
-            });
-        });
-
-        const chatContainer = document.querySelector('#chat-container');
-        if (chatContainer) {
-            observer.observe(chatContainer, { childList: true, subtree: true });
-        }
-    </script>
-    """)
-
     with gr.Row():
         with gr.Column(scale=1):
             sidebar = gr.Accordion("⚙️ Control Panel", open=False)
